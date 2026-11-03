@@ -10,8 +10,22 @@ namespace Dou_GW_Studio.Services;
 
 public sealed class AppUpdateService
 {
-    public const string UpdateSlug = "gw-studio";
-    public const string LatestApiUrl = "https://portal.doukan.io/api/updates/gw-studio/latest";
+    public const string Owner = "d0ukan";
+    public const string Repo = "GW-Studio";
+    public const string LatestApiUrl = $"https://api.github.com/repos/{Owner}/{Repo}/releases/latest";
+    public const string ReleasesPageUrl = $"https://github.com/{Owner}/{Repo}/releases/latest";
+
+    /// <summary>
+    /// True when running from the Portable package (it ships an empty portable.txt next to the exe).
+    /// Portable copies are never updated through the installer; the user is sent to the releases page instead.
+    /// </summary>
+    public static bool IsPortable => File.Exists(Path.Combine(AppContext.BaseDirectory, "portable.txt"));
+
+    public void OpenReleasesPage()
+    {
+        Process.Start(new ProcessStartInfo(ReleasesPageUrl) { UseShellExecute = true });
+        AppLogService.Write($"portable build: opened releases page {ReleasesPageUrl}");
+    }
 
     private static readonly HttpClient SharedClient = CreateClient();
     private readonly HttpClient http;
@@ -20,9 +34,10 @@ public sealed class AppUpdateService
 
     public string InstalledVersion => AppVersionInfo.DisplayVersion;
 
+    /// <summary>Queries the latest published (non-draft, non-prerelease) GitHub Release.</summary>
     public async Task<AppUpdateInfo> CheckLatestAsync(CancellationToken cancellationToken = default)
     {
-        AppLogService.Write("update check started");
+        AppLogService.Write("update check started (GitHub Releases)");
         AppLogService.Write($"installed version: {InstalledVersion}");
         try
         {
@@ -31,15 +46,8 @@ public sealed class AppUpdateService
             using var response = await http.GetAsync(LatestApiUrl, HttpCompletionOption.ResponseHeadersRead, checkCts.Token).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             await using var stream = await response.Content.ReadAsStreamAsync(checkCts.Token).ConfigureAwait(false);
-            var info = await JsonSerializer.DeserializeAsync<AppUpdateInfo>(stream, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }, checkCts.Token).ConfigureAwait(false) ?? throw new InvalidDataException("Portal update response was empty or invalid.");
-
-            if (string.IsNullOrWhiteSpace(info.Version)) throw new InvalidDataException("Portal update response does not contain a version.");
-            if (string.IsNullOrWhiteSpace(info.DownloadUrl)) throw new InvalidDataException("Portal update response does not contain a download URL.");
-            if (!string.IsNullOrWhiteSpace(info.Slug) && !string.Equals(info.Slug, UpdateSlug, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException($"Portal returned an unexpected update slug: {info.Slug}");
+            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: checkCts.Token).ConfigureAwait(false);
+            var info = ParseRelease(doc.RootElement);
 
             AppLogService.Write($"remote version: {NormalizeVersionText(info.Version)}");
             AppLogService.Write(IsUpdateAvailable(info) ? "update available" : "no update available");
@@ -50,6 +58,46 @@ public sealed class AppUpdateService
             AppLogService.Write($"update check/download error: {ex.GetType().Name}: {ex.Message}");
             throw;
         }
+    }
+
+    /// <summary>Maps a GitHub "latest release" JSON object to <see cref="AppUpdateInfo"/>.</summary>
+    public static AppUpdateInfo ParseRelease(JsonElement root)
+    {
+        var tag = root.TryGetProperty("tag_name", out var t) ? t.GetString() : null;
+        if (string.IsNullOrWhiteSpace(tag)) throw new InvalidDataException("GitHub release response does not contain a tag_name.");
+        ParseVersion(tag); // validates the tag looks like a version
+
+        var info = new AppUpdateInfo
+        {
+            Version = tag!,
+            Notes = root.TryGetProperty("body", out var body) ? body.GetString() ?? string.Empty : string.Empty,
+            PublishedAt = root.TryGetProperty("published_at", out var pub) ? pub.GetString() ?? string.Empty : string.Empty
+        };
+
+        // Prefer the Setup .exe; accept a ZIP that contains it.
+        if (root.TryGetProperty("assets", out var assets) && assets.ValueKind == JsonValueKind.Array)
+        {
+            JsonElement? best = null;
+            var bestScore = 0;
+            foreach (var asset in assets.EnumerateArray())
+            {
+                var name = asset.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
+                if (!name.Contains("Setup", StringComparison.OrdinalIgnoreCase)) continue;
+                var score = name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? 2
+                          : name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+                if (score > bestScore) { best = asset; bestScore = score; }
+            }
+            if (best is { } chosen)
+            {
+                info.FileName = chosen.GetProperty("name").GetString() ?? string.Empty;
+                info.DownloadUrl = chosen.TryGetProperty("browser_download_url", out var u) ? u.GetString() ?? string.Empty : string.Empty;
+                info.SizeBytes = chosen.TryGetProperty("size", out var sz) && sz.TryGetInt64(out var size) ? size : 0;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(info.DownloadUrl) && !IsPortable)
+            throw new InvalidDataException("The latest GitHub release has no Setup installer asset.");
+        return info;
     }
 
     public bool IsUpdateAvailable(AppUpdateInfo info) => CompareVersions(info.Version, InstalledVersion) > 0;
@@ -84,8 +132,9 @@ public sealed class AppUpdateService
         Directory.CreateDirectory(updateRoot);
         Directory.CreateDirectory(extractDir);
 
-        var fileName = SanitizeFileName(string.IsNullOrWhiteSpace(info.FileName) ? $"GW-Studio-Setup-v{NormalizeVersionText(info.Version)}.zip" : info.FileName);
-        if (!fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) fileName += ".zip";
+        var fileName = SanitizeFileName(string.IsNullOrWhiteSpace(info.FileName) ? $"GW-Studio-Setup-v{NormalizeVersionText(info.Version)}.exe" : info.FileName);
+        var isExe = fileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+        if (!isExe && !fileName.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)) fileName += ".zip";
         var zipPath = Path.Combine(updateRoot, fileName);
 
         try
@@ -112,6 +161,13 @@ public sealed class AppUpdateService
                 }
             }
             AppLogService.Write($"download completed: {zipPath}");
+
+            if (isExe)
+            {
+                AppLogService.Write($"setup found: {zipPath}");
+                progress?.Report(new("Ready", total ?? 0, total));
+                return zipPath;
+            }
 
             progress?.Report(new("Extracting", 0, null));
             ZipFile.ExtractToDirectory(zipPath, extractDir, false);
@@ -166,6 +222,7 @@ public sealed class AppUpdateService
     {
         var client = new HttpClient { Timeout = Timeout.InfiniteTimeSpan };
         client.DefaultRequestHeaders.UserAgent.ParseAdd("GW-Studio-Updater/1.0");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
         return client;
     }
 

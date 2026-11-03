@@ -459,7 +459,7 @@ public sealed class MainViewModel : ObservableObject
     private async Task CheckForUpdatesManualAsync()
     {
         manualUpdateCheckStarted = true;
-        UpdateStatus = "Checking portal.doukan.io…";
+        UpdateStatus = "Checking GitHub releases…";
         try
         {
             var info = await updateService.CheckLatestAsync();

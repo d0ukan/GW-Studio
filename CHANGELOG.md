@@ -1,3 +1,10 @@
+# Unreleased
+
+- Online update now reads the latest **GitHub Release** (`d0ukan/GW-Studio`) instead of the portal; the Setup `.exe` asset is downloaded and started directly.
+- Added a **Portable** edition (marked by `portable.txt`) that never runs the installer and instead opens the release page.
+- Added `installer/GW-Studio.iss` (Inno Setup) and a GitHub Actions release workflow producing a self-contained Setup `.exe` and Portable ZIP.
+- Fixed the console test project so it builds; added update-parsing tests.
+
 # v1.1.1 — 2026-10-02
 
 - Fixed the Compact/Advanced toggle label so the button shows the destination mode: ADVANCED while Compact mode is active, and COMPACT while Advanced mode is active.

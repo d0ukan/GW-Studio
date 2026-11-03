@@ -1,3 +1,4 @@
+using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
@@ -178,17 +179,30 @@ await Test("Update version comparison is numeric and accepts v prefix", () => Sy
 }));
 await Test("Update API equal version does not report an update", async () =>
 {
-    var json = $"{{\"app\":\"GW Studio\",\"slug\":\"gw-studio\",\"version\":\"{Dou_GW_Studio.Helpers.AppVersionInfo.DisplayVersion}\",\"downloadUrl\":\"https://example.test/update.zip\"}}";
+    var json = $"{{\"tag_name\":\"v{Dou_GW_Studio.Helpers.AppVersionInfo.DisplayVersion}\",\"assets\":[{{\"name\":\"GW-Studio-Setup-v1.exe\",\"browser_download_url\":\"https://example.test/GW-Studio-Setup.exe\",\"size\":1}}]}}";
     var service = new AppUpdateService(new HttpClient(new FakeHttpHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(json, Encoding.UTF8, "application/json") })));
     var info = await service.CheckLatestAsync();
     Check(!service.IsUpdateAvailable(info));
 });
 await Test("Update API newer version reports an update", async () =>
 {
-    var json = "{\"app\":\"GW Studio\",\"slug\":\"gw-studio\",\"version\":\"v99.0.0\",\"downloadUrl\":\"https://example.test/update.zip\"}";
+    var json = "{\"tag_name\":\"v99.0.0\",\"body\":\"notes\",\"assets\":[{\"name\":\"GW-Studio-Portable-v99.0.0.zip\",\"browser_download_url\":\"https://example.test/p.zip\"},{\"name\":\"GW-Studio-Setup-v99.0.0.exe\",\"browser_download_url\":\"https://example.test/GW-Studio-Setup-v99.0.0.exe\",\"size\":5}]}";
     var service = new AppUpdateService(new HttpClient(new FakeHttpHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(json, Encoding.UTF8, "application/json") })));
     var info = await service.CheckLatestAsync();
     Check(service.IsUpdateAvailable(info));
+    Check(info.FileName == "GW-Studio-Setup-v99.0.0.exe" && info.DownloadUrl.EndsWith("GW-Studio-Setup-v99.0.0.exe") && info.Notes == "notes");
+});
+await Test("GitHub release without Setup asset is rejected", async () =>
+{
+    var json = "{\"tag_name\":\"v99.0.0\",\"assets\":[{\"name\":\"GW-Studio-Portable-v99.0.0.zip\",\"browser_download_url\":\"https://example.test/p.zip\"}]}";
+    var service = new AppUpdateService(new HttpClient(new FakeHttpHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(json, Encoding.UTF8, "application/json") })));
+    await Throws<InvalidDataException>(() => service.CheckLatestAsync());
+});
+await Test("Direct Setup exe download returns the exe without extraction", async () =>
+{
+    var service = new AppUpdateService(new HttpClient(new FakeHttpHandler(_ => new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(new byte[] { 1, 2, 3 }) })));
+    var path = await service.DownloadExtractAndFindSetupAsync(new() { Version = "99.0.0", DownloadUrl = "https://example.test/GW-Studio-Setup-v99.0.0.exe", FileName = "GW-Studio-Setup-v99.0.0.exe" });
+    Check(File.Exists(path) && path.EndsWith(".exe") && new FileInfo(path).Length == 3);
 });
 await Test("Corrupt update ZIP fails without starting an installer", async () =>
 {

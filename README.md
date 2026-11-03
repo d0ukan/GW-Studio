@@ -1,118 +1,190 @@
+<div align="center">
+
+<img src="Assets/GWStudioLogo.png" alt="GW Studio" width="140">
+
 # GW Studio
 
-Windows desktop application for controlling, monitoring, logging and automating tests on **GW Instek GPP-3060** and **GPP-4323** programmable power supplies over USB CDC (virtual COM port).
+**Control, monitor, log and automate your GW Instek GPP bench power supply from Windows.**
 
-![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4) ![WPF](https://img.shields.io/badge/UI-WPF-0078D4) ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey) ![Version](https://img.shields.io/badge/version-1.1.1-00BCD4)
+Supports **GPP-3060** and **GPP-4323** · USB CDC (virtual COM port) · Auto model detection
 
-Current version: **1.1.1** — see [CHANGELOG.md](CHANGELOG.md) for release history.
+**English** · [Türkçe](README.tr.md)
 
-## Features
+![Version](https://img.shields.io/badge/version-1.1.1-00BCD4)
+![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
+![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4)
 
-- **Automatic model detection** — the channel layout and safety limits come from the verified `*IDN?` response.
-- **Dashboard** — large live V / A / W readouts, device setpoint readback, per-channel locks, quick presets, soft warnings and live CV / CC / CR / TRIP status badges.
-- **Live Graph** — full-screen graphs with pause, cursor, pan/zoom/reset, event markers and visible-window CSV / PNG export (OxyPlot).
-- **Logger** — continuous CSV logging and on-demand PDF session reports.
-- **Custom / Sequence** — PC-timed numeric V/I profiles and the instrument's native sequence.
-- **704 Lab** — waveform builder (Linear, Exponential, Logarithmic, Inverse-time, reference equation), 704 Test Library, Segment Editor, Drag Editor, loop/repeat, and a save/load library. PC-timed bench aid only; **not** a MIL-STD-704 compliance tool.
-- **Terminal** — raw SCPI console.
-- **Compact / Advanced view**, auto reconnect, connection-health and acquisition-rate indicators.
-- **Optional online update** — asks before downloading or installing anything.
+<img src="docs/images/dashboard.png" alt="GW Studio dashboard" width="900">
 
-## Supported models
+</div>
 
-| Model | Channel | Programming behavior |
+---
+
+## ✨ What can it do?
+
+| | |
+| --- | --- |
+| 🔌 **Auto detection** | Connect and the right channels and limits appear, based on the instrument's `*IDN?` reply |
+| 📟 **Live dashboard** | Large V / A / W readouts, setpoints, CV / CC / CR / TRIP badges, quick presets |
+| 📈 **Live graphs** | Pause, zoom, cursor, event markers, full screen, export to CSV / PNG |
+| 📝 **Logging** | Continuous CSV logging and one-click PDF session reports |
+| 🧪 **Test automation** | Custom V/I profiles, native sequences and the **704 Lab** waveform builder |
+| 🖥️ **Terminal** | Send raw SCPI commands when you need to |
+| 🛡️ **Safety first** | Connecting never switches an output; one big **ALL OUTPUT OFF** button |
+| 🔄 **Optional updates** | Asks before it downloads or installs anything |
+
+---
+
+## 🚀 Quick start
+
+### 1. Download
+
+Get the latest build from the [**Releases**](https://github.com/d0ukan/GW-Studio/releases) page:
+
+| Package | Use it when |
+| --- | --- |
+| **Setup** (`GW-Studio-Setup-vX.Y.Z.exe`) | You want a normal install with Start Menu entry and updates |
+| **Portable** (`GW-Studio-Portable-vX.Y.Z.zip`) | You want to unzip and run it from any folder or USB stick |
+
+> No separate .NET installation is needed, both packages include everything the app requires.
+> You only need the **GW Instek USB CDC driver** so Windows sees the instrument as a COM port.
+
+### 2. Connect
+
+Plug in the power supply over USB, pick its COM port and press **CONNECT**. GW Studio identifies the model and builds the matching channel cards. Your outputs stay exactly as they were.
+
+<img src="docs/images/connect.gif" alt="Connecting to the instrument" width="720">
+
+### 3. Set and switch on
+
+Enter voltage and current limit, press **APPLY SETTINGS**, then switch the channel output **ON**. Applying values never turns an output on by itself.
+
+---
+
+## 🖼️ A quick tour
+
+### Dashboard
+Everything for day-to-day bench work: live readings, setpoints, locks and presets. Switch between **COMPACT** and **ADVANCED** in the header to show only what you need.
+
+<img src="docs/images/dashboard.png" alt="Dashboard" width="800">
+
+### Live Graph
+Watch voltage, current and power in real time. Output, setpoint and protection events are marked automatically.
+
+<img src="docs/images/live-graph.png" alt="Live graph" width="800">
+
+### 704 Lab
+Build voltage waveforms (linear, exponential, logarithmic, inverse-time, reference equation), edit them with segments or by dragging points, pick a ready template from the test library, and run them with loop/repeat.
+
+<img src="docs/images/704-lab.png" alt="704 Lab" width="800">
+
+> PC-timed bench aid only. It is **not** a MIL-STD-704 compliance tool.
+
+### Logger and PDF reports
+Log every reading to CSV and generate a PDF report of your session when you are done.
+
+<img src="docs/images/logger-pdf.png" alt="Logger and PDF report" width="800">
+
+---
+
+## 🛡️ Safety in one minute
+
+- **Connect never changes an output.**
+- **APPLY changes setpoints only.** Output ON is always an explicit action.
+- **ALL ON** only works from a verified all-OFF state; otherwise the first press turns everything OFF.
+- Out-of-range values, wrong-model profiles and unsupported channels are rejected **before** anything is sent to the instrument.
+- Software current auto-off depends on polling speed. It does **not** replace the instrument's hardware OVP / OCP.
+
+---
+
+## 📦 Supported instruments
+
+| Model | Channel | Programmable range |
 | --- | --- | --- |
-| GPP-3060 | CH1 / CH2 | 0–32 V, 0–6 A; programmable V/I |
-| GPP-3060 | CH3 | selectable 1.8 / 2.5 / 3.3 / 5 V; fixed 5 A rating; output control only |
-| GPP-4323 | CH1 / CH2 | 0–32 V, 0–3 A; programmable V/I |
-| GPP-4323 | CH3 | 0–5 V, 0–1 A; programmable V/I |
-| GPP-4323 | CH4 | 0–15 V, 0–1 A; programmable V/I |
+| GPP-3060 | CH1 / CH2 | 0–32 V, 0–6 A |
+| GPP-3060 | CH3 | 1.8 / 2.5 / 3.3 / 5 V, fixed 5 A (output on/off only) |
+| GPP-4323 | CH1 / CH2 | 0–32 V, 0–3 A |
+| GPP-4323 | CH3 | 0–5 V, 0–1 A |
+| GPP-4323 | CH4 | 0–15 V, 0–1 A |
 
-CONNECT opens the selected COM port and sends `*IDN?`. Only an exact supported model is accepted; no channel object is created and no channel command is allowed until identification succeeds.
+Serial link: 115200 baud, 8N1, LF termination.
 
-- Tracking Series/Parallel, Load CV/CC/CR and native Sequence are CH1/CH2-only on both models.
-- GPP-3060 CH3 is excluded from PC-timed numeric V/I profiles because its current is not programmable. It stays available on the Dashboard, graphs, logging and output controls.
-- Saved quick presets and Custom profiles carry a `TargetModel`. A profile made for one model is never loaded or run on the other; legacy untagged profiles are rejected and must be rebuilt after connecting.
+---
 
-## Safety behavior
+<details>
+<summary><b>🔧 Build from source</b></summary>
 
-- Connecting reads identity/settings/states and **never changes an output**.
-- APPLY SETTINGS changes setpoints only; turning an output ON always needs an explicit action.
-- If any output is ON or states are mixed, ALL ON/OFF first turns every detected channel OFF. ALL ON is only allowed from a verified all-OFF state.
-- Disconnect/close preserves outputs by default; OFF-on-disconnect is opt-in.
-- Unsupported models, nonexistent channels, out-of-range values, fixed-current writes and cross-model profiles are rejected **before** any device write.
-- An always-visible **ALL OUTPUT OFF** button is provided.
-- Software current auto-off depends on polling/serial latency and does **not** replace the instrument's hardware OVP/OCP or external protection.
-
-## Requirements
-
-- Windows 10 / 11
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (or Visual Studio 2022 with the *.NET desktop development* workload)
-- GW Instek USB CDC driver for the instrument
-
-Serial settings: 115200 baud, 8 data bits, no parity, 1 stop bit, LF termination.
-
-## Build, run and test
+Requirements: Windows 10/11 and the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 ```powershell
 dotnet restore GW-Studio.sln
 dotnet build GW-Studio.sln -c Release
 dotnet run --project GW-Studio.csproj
 
-# console test runner (no hardware needed)
+# console tests (no hardware needed)
 dotnet run --project Tests/GW-Studio.Tests.csproj -c Release
 ```
 
-`Tests/serial_pty_test.py` is a Linux-only integration fixture that drives the production `SerialDeviceService` through a real pseudo-terminal:
+Release packages (self-contained, so end users need no .NET install):
 
-```bash
-python3 Tests/serial_pty_test.py /path/to/dotnet
+```powershell
+dotnet publish GW-Studio.csproj -c Release -r win-x64 --self-contained true -o publish
 ```
 
-Package versions are pinned via `packages.lock.json` (`RestorePackagesWithLockFile`); commit it when dependencies change.
+`Tests/serial_pty_test.py` is a Linux-only integration fixture that drives the real `SerialDeviceService` through a pseudo-terminal: `python3 Tests/serial_pty_test.py /path/to/dotnet`.
 
-## Project layout
+</details>
+
+<details>
+<summary><b>📁 Project layout</b></summary>
 
 ```text
 GW-Studio.sln
-GW-Studio.csproj        WPF app (net8.0-windows), assembly name "GW Studio"
-App.xaml / MainWindow   Application shell
-Controls/               ChannelCard, GraphPanel, LiveChartControl
-Views/                  Dashboard, 704 Lab, Custom, Sequence, Logger, Terminal, Settings, Help
-ViewModels/             MVVM view models (Main, Channel, Graph, Custom, Sequence, Mil704, ...)
-Models/                 Device models/profiles, custom test profile, update info
-Services/               Serial/GPP device, polling, CSV/PDF/plot export, settings, logging, updates
-Helpers/                Commands, observable base, number parsing, version info
-Themes/                 Dark/cyan theme
-Assets/                 Icons and logo
-Tests/                  Console test project + serial PTY fixture
-docs/                   SCPI commands, hardware checklist, online update, manual notes
+GW-Studio.csproj   WPF app (net8.0-windows)
+Controls/          ChannelCard, GraphPanel, LiveChartControl
+Views/             Dashboard, 704 Lab, Custom, Sequence, Logger, Terminal, Settings, Help
+ViewModels/        MVVM view models
+Models/            Device models, profiles, update info
+Services/          Serial/GPP device, polling, CSV/PDF/plot export, settings, updates
+Helpers/           Commands, number parsing, version info
+Themes/            Dark/cyan theme
+Tests/             Console test project + serial PTY fixture
+docs/              SCPI commands, hardware checklist, update flow, manual notes
 ```
 
 Dependencies: `System.IO.Ports` 8.0.0, `OxyPlot.Wpf` 2.2.0.
 
-## Data locations
+</details>
+
+<details>
+<summary><b>💾 Where is my data?</b></summary>
 
 | Data | Location |
 | --- | --- |
 | Settings | `%APPDATA%\Dou-GW-Studio\settings.json` |
 | Custom profiles | `%LOCALAPPDATA%\Dou-GW-Studio\Profiles` |
-| Logs / reports | `Logs\yyyy-MM-dd\` beside the executable, falling back to `%LOCALAPPDATA%\GW Studio\Logs\yyyy-MM-dd\` |
-| Application / update log | `GW_Studio_App.log` in the active daily Logs folder |
+| Logs and PDF reports | `Logs\yyyy-MM-dd\` next to the executable, otherwise `%LOCALAPPDATA%\GW Studio\Logs\yyyy-MM-dd\` |
+| Application / update log | `GW_Studio_App.log` in the daily Logs folder |
 
-## Online update
+</details>
 
-GW Studio quietly checks `https://portal.doukan.io/api/updates/gw-studio/latest` after startup. Updates are optional: when a newer version exists the app asks before downloading or installing, and **Later** leaves it running normally. **Check for Updates** is also available in the Help tab. Downloads and extraction use Windows TEMP, and the app exits only after the Setup `.exe` has started successfully. Portal/network failures never block startup or device control. Details: [docs/ONLINE-UPDATE.md](docs/ONLINE-UPDATE.md).
+<details>
+<summary><b>🔄 How online updates work</b></summary>
 
-## Documentation
+GW Studio quietly checks the latest [GitHub Release](https://github.com/d0ukan/GW-Studio/releases/latest) after startup. If a newer version exists it asks **Update Now / Later**. Nothing is downloaded or installed without your approval, and network problems never block startup or device control. You can also check manually in the **Help** tab.
 
-- [docs/COMMANDS.md](docs/COMMANDS.md) — SCPI commands used
-- [docs/HARDWARE-CHECK.md](docs/HARDWARE-CHECK.md) — hardware acceptance checklist (run on both a GPP-3060 and a GPP-4323)
-- [docs/GPP-SERIES-MANUAL-NOTES.md](docs/GPP-SERIES-MANUAL-NOTES.md) — manual notes
-- [docs/ONLINE-UPDATE.md](docs/ONLINE-UPDATE.md) — update flow and package naming
-- [docs/TEST-RESULTS.txt](docs/TEST-RESULTS.txt) — validation notes
-- [REVISION-SUMMARY.md](REVISION-SUMMARY.md) — summary of the latest revision
+The **Setup** edition downloads and starts the new installer. The **Portable** edition (it contains a `portable.txt` marker) never updates itself: it only opens the download page, and you replace the folder with the new ZIP. More in [docs/ONLINE-UPDATE.md](docs/ONLINE-UPDATE.md).
+
+</details>
 
 ---
 
+## 📚 More documentation
+
+[SCPI commands](docs/COMMANDS.md) · [Hardware checklist](docs/HARDWARE-CHECK.md) · [Manual notes](docs/GPP-SERIES-MANUAL-NOTES.md) · [Online update](docs/ONLINE-UPDATE.md) · [Changelog](CHANGELOG.md)
+
+<div align="center">
+
 Made by Dou.
+
+</div>
