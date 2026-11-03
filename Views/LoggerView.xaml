@@ -1,0 +1,67 @@
+<UserControl x:Class="Dou_GW_Studio.Views.LoggerView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <StackPanel>
+   <TextBlock Style="{StaticResource Heading}" Text="Measurement logger"/>
+   <TextBlock Style="{StaticResource Muted}" Text="Continuous CSV logging plus an on-demand engineering PDF report. Exports do not add background polling or rendering load." Margin="0,0,0,20"/>
+
+   <Border Style="{StaticResource Card}">
+    <StackPanel>
+     <TextBlock Text="LOG STORAGE" Foreground="{DynamicResource AccentBrush}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+     <TextBlock Style="{StaticResource Label}" Text="LOG FOLDER"/>
+     <TextBox Text="{Binding LogFolderPath, Mode=OneWay}" IsReadOnly="True" ToolTip="The app first tries a Logs folder next to the running EXE. If that location is not writable, it falls back to LocalAppData."/>
+     <WrapPanel Margin="0,10,0,0">
+      <Button Content="OPEN LOGS FOLDER" Command="{Binding OpenLogsFolderCommand}"/>
+     </WrapPanel>
+     <TextBlock Style="{StaticResource Muted}" Text="Preferred location: .\Logs\yyyy-MM-dd\ beside the running application. A LocalAppData fallback is used automatically if the application folder is not writable." TextWrapping="Wrap" Margin="0,10,0,0"/>
+    </StackPanel>
+   </Border>
+
+   <Border Style="{StaticResource Card}">
+    <StackPanel>
+     <TextBlock Text="CSV LOGGER" Foreground="{DynamicResource AccentBrush}" FontSize="16" FontWeight="SemiBold"/>
+     <TextBlock Text="{Binding LogStatus}" FontSize="19" Margin="0,8,0,14"/>
+     <TextBlock Style="{StaticResource Label}" Text="NEXT CSV FILE"/>
+     <TextBox Text="{Binding LogPath}" IsReadOnly="True"/>
+     <WrapPanel Margin="0,14,0,16">
+      <Button Content="START RECORDING" Command="{Binding StartLogCommand}" Style="{StaticResource PrimaryButton}"/>
+      <Button Content="STOP &amp; SAVE" Command="{Binding StopLogCommand}"/>
+     </WrapPanel>
+     <TextBlock Text="Timestamp · Channel · Voltage · Current · Power · Set Voltage · Current Limit · Output State · CV/CC" TextWrapping="Wrap"/>
+     <TextBlock Style="{StaticResource Muted}" Text="CSV is the raw engineering-data format. It uses decimal points and ISO 8601 timestamps. Recording stops on disconnect/communication loss, and existing files are never overwritten." TextWrapping="Wrap" Margin="0,10,0,0"/>
+    </StackPanel>
+   </Border>
+
+   <Border Style="{StaticResource Card}">
+    <StackPanel>
+     <TextBlock Text="PDF SESSION REPORT" Foreground="{DynamicResource AccentBrush}" FontSize="16" FontWeight="SemiBold"/>
+     <TextBlock Style="{StaticResource Muted}" Text="Creates a readable report from the in-memory measurement history. Raw high-rate samples remain in CSV." Margin="0,6,0,14" TextWrapping="Wrap"/>
+
+     <WrapPanel Margin="0,0,0,12">
+      <StackPanel Margin="0,0,18,0">
+       <TextBlock Style="{StaticResource Label}" Text="REPORT RANGE"/>
+       <ComboBox ItemsSource="{Binding PdfRanges}" SelectedItem="{Binding PdfRange}" Width="210"/>
+      </StackPanel>
+      <StackPanel>
+       <TextBlock Style="{StaticResource Label}" Text="CHANNELS"/>
+       <ItemsControl ItemsSource="{Binding Channels}"><ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel><ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Title}" IsChecked="{Binding IncludeInReport}"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      </StackPanel>
+     </WrapPanel>
+
+     <TextBlock Style="{StaticResource Label}" Text="INCLUDE IN REPORT"/>
+     <WrapPanel Margin="0,0,0,14">
+      <CheckBox Content="Voltage graph" IsChecked="{Binding PdfIncludeVoltage}"/>
+      <CheckBox Content="Current graph" IsChecked="{Binding PdfIncludeCurrent}"/>
+      <CheckBox Content="Power graph" IsChecked="{Binding PdfIncludePower}"/>
+      <CheckBox Content="Markers / notes" IsChecked="{Binding PdfIncludeMarkers}"/>
+     </WrapPanel>
+
+     <Button Content="EXPORT PDF REPORT" Command="{Binding ExportPdfCommand}" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left"/>
+     <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0" TextWrapping="Wrap"
+       Text="The PDF includes device identity, connection health, channel set/actual values, Min / Avg / Max statistics, operating state, Custom/Sequence status, selected graphs, markers, and the latest 704 requested-vs-measured waveform snapshot when available. It is generated only when requested, so it adds no continuous runtime load."/>
+    </StackPanel>
+   </Border>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

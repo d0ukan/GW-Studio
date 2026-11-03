@@ -1,0 +1,17 @@
+GW Studio v1.1.1 static validation
+PASS - Embedded 704 plot references existing DarkTrackerTemplate.
+PASS - Fullscreen 704 plot references existing DarkTrackerTemplate.
+PASS - Existing tracker template already used by normal LiveChartControl.
+NOTE - A Windows WPF build and runtime test were not run here (.NET SDK unavailable).
+
+UPDATE / HELP VALIDATION TARGETS
+PASS - Runtime display version is centralized in Helpers/AppVersionInfo.cs.
+PASS - Header, Settings/About, Help, PDF report metadata and updater installed-version source resolve from runtime assembly metadata.
+PASS - Update API URL and slug are isolated in Services/AppUpdateService.cs.
+PASS - Startup update errors are caught/logged and do not block InitializeAsync.
+PASS - Manual update check exposes latest-version and error feedback.
+PASS - Update download/extract runs asynchronously and only uses Windows TEMP.
+PASS - Missing/corrupt ZIP or missing Setup.exe throws without shutting down the running app.
+PASS - Application shutdown occurs only after Process.Start returns a setup process.
+PASS - Help contains the required optional-update statement.
+NOTE - Live portal endpoint returned HTTP 404 from this environment on 2026-10-02, so end-to-end server download/install could not be validated here.

@@ -1,0 +1,1392 @@
+Attached ZIP contains a clean, newly created .NET 8 WPF project.
+
+Project name:
+GW Studio
+
+Use this project as the base.
+Do NOT recreate the solution from scratch unless absolutely necessary.
+Preserve the existing project/solution identity and build on top of it.
+
+The attached project is intentionally clean and minimal.
+
+==================================================
+PROJECT GOAL
+==================================================
+
+Develop a modern Windows desktop control application for:
+
+GW Instek GPP-3060 Programmable DC Power Supply
+
+Application name:
+
+Dou GW Studio
+
+Technology:
+
+- C#
+- .NET 8
+- WPF
+- MVVM architecture
+- Windows desktop application
+- Nullable Reference Types enabled
+- Async/await
+- System.IO.Ports for serial communication
+- CommunityToolkit.Mvvm may be used if useful
+- Prefer minimal and well-maintained NuGet dependencies
+
+The application will control the GW Instek GPP-3060 over USB CDC / Virtual COM Port.
+
+The project should be designed as a professional bench/laboratory power supply and test automation tool, not just a simple serial terminal.
+
+==================================================
+IMPORTANT VERSIONING RULE
+==================================================
+
+The initial version of this project is:
+
+v0.0.1
+
+This version is already represented by the ZIP name.
+
+For EVERY completed future change request:
+
+- increment the application version
+- update the .csproj version
+- update the visible application version
+- update CHANGELOG.md
+- state the resulting version in your response
+
+Patch increment example:
+
+v0.0.1
+v0.0.2
+v0.0.3
+v0.0.4
+
+For larger feature milestones, semantic versioning may be used:
+
+v0.1.0
+v0.2.0
+v1.0.0
+
+IMPORTANT:
+
+Never deliver two different code states with the same version number.
+
+For this first implementation, keep the version as:
+
+v0.0.1
+
+because this is the first actual application implementation.
+
+Create a CHANGELOG.md file.
+
+Also expose the application version somewhere unobtrusive in the UI, such as:
+
+Dou GW Studio
+v0.0.1
+
+==================================================
+DEVICE CONNECTION
+==================================================
+
+The real device has already been tested manually and communication works.
+
+Connection:
+
+USB CDC / Virtual COM Port
+
+Tested configuration:
+
+Baud rate:
+115200
+
+Data bits:
+8
+
+Parity:
+None
+
+Stop bits:
+1
+
+Handshake:
+None
+
+Command termination:
+
+LF
+
+ASCII:
+
+\n
+
+HEX:
+
+0A
+
+Every command sent to the GPP must end in LF.
+
+Example:
+
+*IDN?\n
+
+The Windows driver currently exposes the real device similar to:
+
+GPP Serial (COM24)
+
+Do NOT hardcode COM24.
+
+The program must enumerate available COM ports and let the user choose one.
+
+==================================================
+REAL DEVICE TEST RESULTS
+==================================================
+
+The following commands were manually tested on the actual GW Instek GPP-3060 and confirmed working.
+
+Identification:
+
+*IDN?
+
+Example response:
+
+GW Instek,GPP-3060,SN:GEY854295,V1.07
+
+--------------------------------------------------
+
+Read CH1 set voltage:
+
+VSET1?
+
+Example response:
+
+05.000
+
+Set CH1 voltage:
+
+VSET1:5.000
+
+--------------------------------------------------
+
+Read CH1 current limit:
+
+ISET1?
+
+Example response:
+
+0.1000
+
+Set CH1 current limit:
+
+ISET1:0.1000
+
+--------------------------------------------------
+
+Read actual CH1 output voltage:
+
+VOUT1?
+
+Example response:
+
+4.996V
+
+Read actual CH1 output current:
+
+IOUT1?
+
+Example response:
+
+0.0000A
+
+--------------------------------------------------
+
+Read CH1 output status:
+
+:OUTPut1:STATe?
+
+Possible response:
+
+ON
+
+or:
+
+OFF
+
+Enable CH1:
+
+:OUTPut1:STATe ON
+
+Disable CH1:
+
+:OUTPut1:STATe OFF
+
+--------------------------------------------------
+
+These commands are confirmed working on the real hardware.
+
+Use them as the initial known-good command set.
+
+Do NOT place raw SCPI/GPP command strings throughout ViewModels.
+
+Create a dedicated GPP service layer.
+
+==================================================
+SERIAL COMMUNICATION ARCHITECTURE
+==================================================
+
+Create a clean communication architecture.
+
+Suggested structure:
+
+Services/
+    SerialDeviceService.cs
+    Gpp3060Service.cs
+
+SerialDeviceService should be responsible only for serial communication.
+
+Examples:
+
+ConnectAsync(...)
+DisconnectAsync()
+WriteAsync(...)
+QueryAsync(...)
+
+It must:
+
+- automatically append LF to commands
+- handle timeouts
+- prevent simultaneous conflicting serial operations
+- support cancellation
+- properly dispose SerialPort
+- survive physical USB disconnection gracefully
+- never freeze the UI thread
+
+Polling and manual commands must NOT collide.
+
+Use a central serialized command mechanism such as:
+
+SemaphoreSlim
+
+or a proper command queue.
+
+Only one request/response serial transaction should happen at a time.
+
+==================================================
+DEVICE SERVICE
+==================================================
+
+Create a Gpp3060Service.
+
+Examples:
+
+GetIdentityAsync()
+
+GetVoltageSetAsync(int channel)
+
+SetVoltageAsync(int channel, double voltage)
+
+GetCurrentSetAsync(int channel)
+
+SetCurrentAsync(int channel, double current)
+
+MeasureVoltageAsync(int channel)
+
+MeasureCurrentAsync(int channel)
+
+GetOutputStateAsync(int channel)
+
+SetOutputStateAsync(int channel, bool enabled)
+
+SetAllOutputsOffAsync()
+
+The architecture should make CH1, CH2 and CH3 support possible.
+
+Initial practical priority:
+
+CH1 and CH2
+
+==================================================
+NUMBER FORMATTING
+==================================================
+
+The PC may use Turkish regional settings.
+
+Therefore device commands must ALWAYS use:
+
+CultureInfo.InvariantCulture
+
+Example:
+
+User enters:
+
+28,5
+
+The command sent to the GPP must contain:
+
+28.500
+
+Never send Turkish decimal commas to the instrument.
+
+==================================================
+APPLICATION DESIGN LANGUAGE
+==================================================
+
+The ENTIRE application must use a dark theme.
+
+I want a modern professional engineering/laboratory UI.
+
+I do NOT want:
+
+- old-fashioned WinForms appearance
+- gaming UI
+- RGB styling
+- excessive glow
+- excessive gradients
+- flashy animations
+
+The application should feel like a modern professional laboratory instrument dashboard.
+
+Suggested dark theme:
+
+Background:
+#0B0F14
+
+Surface:
+#111720
+
+Card:
+#171E28
+
+Card Hover:
+#1C2531
+
+Border:
+#263140
+
+Primary Text:
+#E8EDF2
+
+Secondary Text:
+#8D99A6
+
+Accent:
+cyan / teal family
+
+Success:
+green
+
+Warning:
+amber
+
+Danger:
+red
+
+Disabled:
+dark gray
+
+IMPORTANT:
+
+Do NOT hardcode theme colors throughout XAML.
+
+Create a central theme resource:
+
+Themes/DarkTheme.xaml
+
+Buttons, TextBoxes, ComboBoxes, ToggleButtons, TabControl, DataGrid, ScrollBar, ContextMenu, ToolTip, dialogs and charts should all visually match the dark theme.
+
+There should be no random white dropdowns or white grids inside the dark application.
+
+Use Segoe UI for normal interface text.
+
+A monospace/tabular font such as Consolas may be used for large measurement numbers.
+
+==================================================
+MAIN APPLICATION NAVIGATION
+==================================================
+
+Use the following main tabs/pages:
+
+1. Dashboard
+2. Live Graph
+3. Custom
+4. Sequence
+5. Logger
+6. Terminal
+7. Settings
+
+The overall layout should be modern and clean.
+
+A left sidebar navigation is acceptable.
+
+Alternatively, a modern top-level TabControl design is acceptable.
+
+Choose whichever produces the cleaner engineering application UI.
+
+==================================================
+TOP CONNECTION AREA
+==================================================
+
+The top area should clearly show:
+
+Application name
+
+COM port selector
+
+Baud rate
+
+Refresh Ports
+
+Connect / Disconnect
+
+Device connection status
+
+Example:
+
+● CONNECTED
+
+or:
+
+● DISCONNECTED
+
+When connected, show:
+
+Model
+Serial Number
+Firmware Version
+
+Example:
+
+GPP-3060
+SN: GEY854295
+FW: V1.07
+
+Also keep a clearly visible emergency-style:
+
+ALL OUTPUT OFF
+
+button accessible from all primary pages.
+
+It should be noticeable but visually professional.
+
+==================================================
+CONNECTION PROCESS
+==================================================
+
+When Connect is pressed:
+
+1. Open the selected COM port.
+2. Use 115200 / 8N1 / no handshake.
+3. Send:
+
+*IDN?
+
+4. Parse the response.
+5. Verify that the device is a GW Instek GPP-3060.
+6. Extract model, serial number and firmware if possible.
+7. Read current channel settings.
+8. Read current output state.
+9. Start live polling.
+
+If there is no response:
+
+Display a clear non-crashing error such as:
+
+Device did not respond.
+
+If another device answers:
+
+Display something like:
+
+Connected device is not a GW Instek GPP-3060.
+
+IMPORTANT SAFETY RULE:
+
+CONNECT MUST NOT MODIFY OUTPUT STATE.
+
+If CH1 is already ON before connecting, the application must only read that state.
+
+Do not turn it ON or OFF automatically.
+
+==================================================
+DASHBOARD
+==================================================
+
+This is the main day-to-day operating page.
+
+The highest priority information is:
+
+WHAT THE USER SET
+
+versus:
+
+WHAT THE POWER SUPPLY IS ACTUALLY OUTPUTTING
+
+For every channel card show clearly:
+
+Channel number
+
+Output ON/OFF
+
+Actual Voltage
+
+Actual Current
+
+Set Voltage
+
+Current Limit
+
+CV / CC state
+
+OVP / OCP indicators
+
+Actual voltage and current should be the visually dominant values.
+
+Example conceptual layout:
+
+CH1                              OUTPUT ON
+
+      28.002 V             0.8421 A
+      ACTUAL VOLTAGE       ACTUAL CURRENT
+
+Set Voltage                 Current Limit
+[ 28.000 ] V                [ 1.0000 ] A
+
+CV ●
+CC ○
+OVP ○
+OCP ○
+
+[ APPLY SETTINGS ]          [ OUTPUT OFF ]
+
+--------------------------------------------------
+
+Set values should be editable.
+
+Changing a TextBox must NOT immediately alter the real power supply.
+
+The user enters values first.
+
+Only pressing:
+
+APPLY SETTINGS
+
+should send them to the device.
+
+Output ON/OFF must be a separate explicit action.
+
+==================================================
+LIVE POLLING
+==================================================
+
+When connected, periodically read live values.
+
+Initial default polling interval:
+
+500 ms
+
+At minimum read:
+
+VOUT1?
+IOUT1?
+:OUTPut1:STATe?
+
+and equivalent commands for enabled monitored channels.
+
+Polling must:
+
+- run asynchronously
+- not block UI
+- stop on disconnect
+- use CancellationToken
+- not overlap serial commands
+- not conflict with user actions
+
+Design the polling service so its interval can later be changed from Settings.
+
+==================================================
+CH1 / CH2 SOURCE CONFIGURATION
+==================================================
+
+GPP-3060 supports CH1/CH2 operating configurations.
+
+Provide UI and service architecture for:
+
+Independent
+
+Tracking Series
+
+Tracking Parallel
+
+The interface should not always treat CH1 and CH2 as unrelated channels.
+
+When Independent:
+
+show CH1 and CH2 individually.
+
+When Series:
+
+show a combined visualization emphasizing:
+
+Total Voltage
+Current
+
+but also allow viewing CH1 and CH2 individual readbacks.
+
+When Parallel:
+
+show:
+
+Output Voltage
+Combined/Total Current
+
+and individual channel currents if available.
+
+Mode switching must be handled safely.
+
+Do not automatically enable outputs during mode changes.
+
+==================================================
+SOURCE / LOAD MODE
+==================================================
+
+CH1 and CH2 can also operate as an electronic load.
+
+Provide architecture and UI for:
+
+SOURCE
+
+LOAD
+
+Load modes:
+
+CV
+CC
+CR
+
+Load mode should have a clearly different visual state from Source mode.
+
+Example:
+
+CH1
+ELECTRONIC LOAD MODE
+
+Mode:
+[ CV ] [ CC ] [ CR ]
+
+Actual Voltage
+Actual Current
+Actual Power
+
+Set parameter
+
+[ LOAD ON / OFF ]
+
+Use an amber or similarly distinct professional badge for LOAD MODE.
+
+Do not make the user accidentally confuse SOURCE with LOAD.
+
+==================================================
+LIVE GRAPH TAB
+==================================================
+
+Create a dedicated:
+
+Live Graph
+
+tab.
+
+The user must be able to choose which channels are displayed.
+
+Channel selectors:
+
+☑ CH1
+☑ CH2
+☐ CH3
+
+The user must also choose which measurements are visible:
+
+☑ Voltage
+☑ Current
+☐ Power
+
+Optional reference lines:
+
+☑ Voltage Set
+☑ Current Limit
+
+Voltage and Current should preferably use separate graphs because they have different units.
+
+Do NOT put volts and amps on the same Y-axis.
+
+The graphs should be fully dark-theme compatible.
+
+Time windows:
+
+10 seconds
+
+30 seconds
+
+1 minute
+
+5 minutes
+
+10 minutes
+
+All
+
+Controls:
+
+Pause
+Resume
+Clear
+Auto Scale
+
+Design it so cursor/inspection support can be added later.
+
+The graph architecture should support multiple channels simultaneously.
+
+Example:
+
+CH1 Actual Voltage
+CH1 Set Voltage
+CH2 Actual Voltage
+CH2 Set Voltage
+
+Power may be calculated in software:
+
+P = V × I
+
+==================================================
+CUSTOM TAB
+==================================================
+
+Create a dedicated:
+
+Custom
+
+tab.
+
+This is intended for special power/transient tests.
+
+The goal is to support workflows such as:
+
+- Apply power for 50 ms then turn it OFF.
+- Operate at 28 V, temporarily increase to 31 V for 100 ms, then return to 28 V.
+- Power cycle repeatedly.
+- Execute a user-defined timeline.
+
+Provide preset modes:
+
+1. Pulse
+2. Voltage Step
+3. Power Cycle
+4. Custom Timeline
+
+==================================================
+CUSTOM - PULSE
+==================================================
+
+Fields:
+
+Channel
+
+Voltage
+
+Current Limit
+
+ON Time
+
+Repeat
+
+Initial State
+
+Final State
+
+Buttons:
+
+ARM
+
+RUN
+
+Example:
+
+CH1
+28.000 V
+2.000 A
+50 ms
+Repeat 1
+Initial OFF
+Final OFF
+
+==================================================
+CUSTOM - VOLTAGE STEP
+==================================================
+
+Fields:
+
+Channel
+
+Base Voltage
+
+Step Voltage
+
+Step Duration
+
+Current Limit
+
+Delay Before Step
+
+Return To Base
+
+Example:
+
+Base:
+28.000 V
+
+Step:
+31.000 V
+
+Duration:
+100 ms
+
+Return:
+28.000 V
+
+==================================================
+CUSTOM - POWER CYCLE
+==================================================
+
+Example capability:
+
+28 V ON
+3 seconds
+
+OFF
+500 ms
+
+28 V ON
+3 seconds
+
+Repeat:
+10
+
+==================================================
+CUSTOM TIMELINE
+==================================================
+
+Allow the user to build a multi-step profile.
+
+Use a dark-themed editable table.
+
+Columns:
+
+Step
+
+Channel
+
+Voltage
+
+Current Limit
+
+Output State
+
+Duration
+
+Controls:
+
+Add Step
+
+Duplicate Step
+
+Delete Step
+
+Move Up
+
+Move Down
+
+Save Profile
+
+Load Profile
+
+Run Profile
+
+Stop
+
+Example:
+
+Step 1:
+CH1
+28 V
+2 A
+ON
+5 s
+
+Step 2:
+CH1
+31 V
+2 A
+ON
+100 ms
+
+Step 3:
+CH1
+28 V
+2 A
+ON
+5 s
+
+Step 4:
+CH1
+OFF
+
+==================================================
+IMPORTANT TIMING WARNING
+==================================================
+
+GW Instek GPP-3060 native Sequence mode does NOT provide millisecond timing resolution.
+
+Therefore do NOT falsely claim that a requested 50 ms or 100 ms transition is hardware-deterministic.
+
+For millisecond Custom operations, clearly label execution as:
+
+PC Timed
+
+Add a warning such as:
+
+PC-timed execution is not deterministic.
+Actual transition timing may differ from the requested duration due to Windows scheduling, USB/serial communication and instrument response time.
+
+Provide an architecture that can distinguish:
+
+PC Timed
+
+and:
+
+GPP Native Sequence
+
+For slower tests that can use the power supply's own native Sequence engine, the application should be able to support that later.
+
+==================================================
+CUSTOM TAB LIVE GRAPH
+==================================================
+
+The Custom page must also contain live graph monitoring.
+
+The user should be able to choose:
+
+Channels:
+
+CH1
+CH2
+CH3
+
+Signals:
+
+Voltage
+Current
+Power
+
+Use the SAME reusable chart component/service as the Live Graph page.
+
+Do NOT independently implement two completely different graph engines.
+
+While a custom test is running, show:
+
+Current test state
+
+Current step
+
+Elapsed time
+
+Remaining time if possible
+
+Requested voltage/current
+
+Actual voltage/current
+
+The graph should continue updating during the test.
+
+==================================================
+SEQUENCE TAB
+==================================================
+
+GPP-3060 has a native Sequence feature.
+
+Build this tab with the architecture needed for native sequence control.
+
+Native GPP sequence steps contain:
+
+Voltage
+Current
+Time
+
+The GPP native sequence timing resolution is approximately 1 second and its step duration range is 1–300 seconds.
+
+Keep this clearly separate from PC-timed millisecond Custom tests.
+
+Initial version may provide a basic UI and service architecture if full native Sequence implementation would make the first milestone too large.
+
+However do not create misleading fake functionality.
+
+If a function is not implemented yet, clearly show it as not yet implemented rather than pretending it works.
+
+==================================================
+LOGGER TAB
+==================================================
+
+Prepare a logger for long-term measurement recording.
+
+Future goal:
+
+Timestamp
+Channel
+Voltage
+Current
+Power
+Set Voltage
+Current Limit
+Output State
+CV/CC state
+
+Allow later export to:
+
+CSV
+
+The initial version may provide the core architecture and UI.
+
+Do not let continuous polling logs consume unlimited memory.
+
+==================================================
+TERMINAL TAB
+==================================================
+
+Create a simple Hercules-style SCPI/debug terminal.
+
+Example:
+
+Command:
+
+[ *IDN?                    ] [ SEND ]
+
+Display log:
+
+14:32:02 TX  *IDN?
+14:32:02 RX  GW Instek,GPP-3060,...
+
+TX and RX should have visually distinct styling.
+
+Automatically append LF.
+
+Do not require the user to manually type line endings.
+
+Maintain approximately the last 500 communication entries in memory.
+
+Design a future option to hide polling traffic.
+
+==================================================
+SETTINGS TAB
+==================================================
+
+Provide settings architecture for items such as:
+
+Polling interval
+
+Serial timeout
+
+Theme
+
+Turn outputs off on disconnect
+
+Logging preferences
+
+IMPORTANT:
+
+Default:
+
+Turn outputs off on disconnect = FALSE
+
+Disconnecting should not modify output state unless the user explicitly enables this setting.
+
+The UI should currently be fully dark theme.
+
+It is acceptable to prepare future:
+
+Dark
+System
+Light
+
+theme architecture.
+
+Dark is the current supported/default theme.
+
+==================================================
+SAFETY REQUIREMENTS
+==================================================
+
+These requirements are extremely important.
+
+1. Application startup must NEVER automatically turn outputs ON.
+
+2. Application startup should not arbitrarily turn outputs OFF either.
+
+3. Connect must not change output state.
+
+4. Disconnect must not change output state by default.
+
+5. Voltage/current editing must not immediately affect hardware until Apply is pressed.
+
+6. Output ON must always be a separate explicit user command.
+
+7. ALL OUTPUT OFF must always be easy to access.
+
+8. Invalid numeric values must be rejected before sending them to hardware.
+
+9. Device disconnect should not crash the application.
+
+10. Serial exceptions should appear as understandable UI errors.
+
+==================================================
+DEVICE LIMITS
+==================================================
+
+Do not scatter numeric limits throughout the code.
+
+Create a centralized model/configuration for device limits.
+
+For GPP-3060:
+
+CH1/CH2 approximately:
+
+0–30 V
+0–6 A
+
+Use manufacturer-supported ranges in a centralized device capability definition.
+
+CH3 must be modeled separately because its capabilities differ from CH1/CH2.
+
+==================================================
+PROJECT ARCHITECTURE
+==================================================
+
+Create a clean scalable project structure.
+
+Suggested structure:
+
+Models/
+    DeviceInfo.cs
+    GppChannelState.cs
+    DeviceCapabilities.cs
+    MeasurementPoint.cs
+    CustomTestProfile.cs
+    CustomTestStep.cs
+
+Services/
+    SerialDeviceService.cs
+    Gpp3060Service.cs
+    DevicePollingService.cs
+    CustomTestExecutionService.cs
+    MeasurementHistoryService.cs
+
+ViewModels/
+    MainViewModel.cs
+    DashboardViewModel.cs
+    LiveGraphViewModel.cs
+    CustomViewModel.cs
+    SequenceViewModel.cs
+    LoggerViewModel.cs
+    TerminalViewModel.cs
+    SettingsViewModel.cs
+
+Views/
+    DashboardView.xaml
+    LiveGraphView.xaml
+    CustomView.xaml
+    SequenceView.xaml
+    LoggerView.xaml
+    TerminalView.xaml
+    SettingsView.xaml
+
+Controls/
+    ChannelCard.xaml
+    LiveChartControl.xaml
+    StatusBadge.xaml
+
+Themes/
+    DarkTheme.xaml
+
+Converters/
+
+Helpers/
+
+Do not blindly create unnecessary abstraction.
+
+Keep the architecture understandable.
+
+==================================================
+CHART LIBRARY
+==================================================
+
+Choose a suitable modern WPF chart library that:
+
+- supports .NET 8
+- supports live updating
+- supports multiple line series
+- can be styled for dark mode
+- has acceptable performance for this application
+
+A lightweight maintained library such as LiveCharts2 may be considered.
+
+If adding a chart NuGet dependency, document exactly which package/version was added and why.
+
+==================================================
+MVVM
+==================================================
+
+Use proper MVVM.
+
+Avoid putting application logic into MainWindow.xaml.cs.
+
+Code-behind should be minimal and only used where WPF-specific behavior genuinely requires it.
+
+Commands, state and business logic belong in ViewModels/services.
+
+==================================================
+ASYNC / THREADING
+==================================================
+
+Do not block the WPF UI thread.
+
+Do not use Thread.Sleep for UI workflows.
+
+Use async Task patterns.
+
+For cancellable test timing use:
+
+Task.Delay(..., CancellationToken)
+
+where appropriate.
+
+Custom tests must be stoppable.
+
+A STOP action must cancel the running custom profile safely.
+
+==================================================
+FIRST IMPLEMENTATION MILESTONE
+==================================================
+
+Build a genuinely usable first version.
+
+The highest-priority WORKING functionality is:
+
+1. Modern full dark-theme shell
+2. COM port discovery
+3. Refresh ports
+4. Connect
+5. Disconnect
+6. *IDN? verification
+7. Device identity display
+8. CH1 read set voltage
+9. CH1 set voltage
+10. CH1 read current limit
+11. CH1 set current limit
+12. CH1 read actual voltage
+13. CH1 read actual current
+14. CH1 output ON/OFF
+15. CH1 output status
+16. CH2 architecture and controls
+17. Live asynchronous polling
+18. Dashboard
+19. Live Graph page
+20. Custom page architecture/UI
+21. Terminal
+22. ALL OUTPUT OFF architecture
+23. Clean MVVM/service architecture
+
+If practical, also implement CH2 using the equivalent command pattern.
+
+Do not attempt to fake unsupported functionality.
+
+Series/Parallel/Load/Sequence functionality may be introduced carefully according to documented GPP commands, but the application structure must already anticipate them.
+
+==================================================
+BUILD QUALITY
+==================================================
+
+The project must build.
+
+Do not leave placeholder pseudo-code in required working functionality.
+
+Do not leave compile errors.
+
+Do not leave missing XAML resources.
+
+Do not leave unresolved namespaces.
+
+Do not leave empty event handlers that are required for operation.
+
+Run a build before delivery.
+
+Fix build errors.
+
+==================================================
+README
+==================================================
+
+Create README.md containing:
+
+- project purpose
+- supported device
+- requirements
+- connection settings
+- build instructions
+- current supported features
+- known limitations
+- safety/timing note for PC-timed millisecond operations
+- project version
+
+==================================================
+CHANGELOG
+==================================================
+
+Create CHANGELOG.md.
+
+Initial entry:
+
+v0.0.1
+
+Summarize the features implemented in this first working version.
+
+==================================================
+FINAL DELIVERY
+==================================================
+
+Work directly on the attached project.
+
+Do not replace the project with a completely unrelated new solution.
+
+At completion:
+
+1. Build the project.
+2. Fix all build errors.
+3. State the current application version.
+4. Summarize implemented features.
+5. List any features intentionally postponed.
+6. List all NuGet packages added.
+7. Mention any important technical decisions.
+8. Update README.md.
+9. Update CHANGELOG.md.
+10. Return the COMPLETE updated project as a ZIP.
+
+The returned ZIP should NOT contain unnecessary generated folders such as:
+
+.vs
+bin
+obj
+
+unless they are absolutely required.
+
+The resulting ZIP must be ready for me to extract, open in Visual Studio, build and run.
+
+Do not only provide code snippets in the response.
+Actually modify the attached project and return the complete project ZIP.

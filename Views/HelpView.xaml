@@ -1,0 +1,46 @@
+<UserControl x:Class="Dou_GW_Studio.Views.HelpView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <StackPanel MaxWidth="1040" HorizontalAlignment="Left">
+   <TextBlock Style="{StaticResource Heading}" Text="{Binding HelpTitle}"/>
+   <TextBlock Style="{StaticResource Muted}" Text="A short bench-use guide. This page focuses on what to do, not release-history details." Margin="0,0,0,18"/>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="1. Connect and control" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,0" Text="Select the GPP COM port and press CONNECT. GW Studio identifies the supported model before enabling channel control. Set Requested Voltage / Current, press APPLY SETTINGS, then use OUTPUT ON/OFF deliberately. Actual V / A / W values are measurements from the instrument."/>
+   </StackPanel></Border>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="2. Compact and Advanced" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,0" Text="COMPACT keeps the normal bench controls visible. ADVANCED reveals Live Graph, Custom, Sequence, Logger and Terminal tools. The header toggle shows the mode you will switch to (ADVANCED while Compact is active, COMPACT while Advanced is active). Changing view mode does not change the power-supply output state."/>
+   </StackPanel></Border>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="3. 704 Lab" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,0" Text="Use Quick Builder for simple linear/exponential/log/inverse-time curves, 704 Test Library for ready starting profiles, Segment Editor for row-based waveforms, and Drag Editor for manual control-point shaping. Build the waveform first, ARM it, then RUN. ARM validates generated points against the connected channel limits."/>
+    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}" Margin="0,7,0,0" Text="704 timing is PC/USB/serial timed. Verify short transients and interruption timing with an oscilloscope when timing accuracy matters."/>
+   </StackPanel></Border>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="4. Graphs, logging and reports" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,0" Text="Live Graph shows measured channel history. Event markers and set-value references can be hidden without deleting data. CSV is the raw measurement log. PDF reports summarize the selected session data and include graphs; 704 graphs can also be exported as PNG."/>
+   </StackPanel></Border>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="5. Safety" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,0" Text="ALL OUTPUT OFF is the fastest application-level way to request every detected output OFF. Software limits, polling and PC-timed tests do not replace the power supply's hardware protection or independent test protection."/>
+   </StackPanel></Border>
+
+   <Border Style="{StaticResource Card}"><StackPanel>
+    <TextBlock Text="Online Update" FontSize="17" FontWeight="SemiBold"/>
+    <TextBlock TextWrapping="Wrap" Margin="0,9,0,8" Text="Updates are optional. When a newer version is available, GW Studio asks before downloading or installing it."/>
+    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}" Margin="0,0,0,12" Text="GW Studio checks portal.doukan.io quietly after startup. If the portal is unavailable, device control and the rest of the application continue normally."/>
+    <WrapPanel>
+     <Button Content="CHECK FOR UPDATES" Command="{Binding CheckForUpdatesCommand}" Style="{StaticResource PrimaryButton}" ToolTip="Available when no test or device action is currently running."/>
+     <TextBlock Text="{Binding UpdateStatus}" VerticalAlignment="Center" Foreground="{DynamicResource SecondaryBrush}" Margin="12,0,0,0"/>
+    </WrapPanel>
+   </StackPanel></Border>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

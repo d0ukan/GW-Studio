@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>Dou_GW_Studio</RootNamespace><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF><EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <Version>1.1.1</Version><AssemblyVersion>1.1.1.0</AssemblyVersion><FileVersion>1.1.1.0</FileVersion><InformationalVersion>1.1.1</InformationalVersion>
+    <AssemblyName>GW Studio</AssemblyName><Title>GW Studio</Title><Product>GW Studio</Product>
+    <Authors>Dou</Authors>
+    <Company>Made by Dou</Company><Copyright>Made by Dou</Copyright>
+    <Description>GW Studio — auto-detecting control, monitoring and test automation for GW Instek GPP-3060 and GPP-4323. Made by Dou.</Description><ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup><Resource Include="Assets\AppIcon.png" /><Resource Include="Assets\AppIcon.ico" /><Resource Include="Assets\GWStudioLogo.png" /></ItemGroup>
+  <ItemGroup><PackageReference Include="System.IO.Ports" Version="8.0.0" /><PackageReference Include="OxyPlot.Wpf" Version="2.2.0" /></ItemGroup>
+  <ItemGroup><Compile Remove="Tests/**/*.cs" /><Page Remove="Tests/**/*.xaml" /></ItemGroup>
+</Project>
