@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="900" height="330" rx="12" fill="#0f141c"/>
+  <text x="225" y="38" fill="#4dd0c4" font-size="20" font-weight="700" text-anchor="middle">GPP-3060</text>
+  <text x="675" y="38" fill="#4dd0c4" font-size="20" font-weight="700" text-anchor="middle">GPP-4323</text>
+  <g fill="#161d29" stroke="#2a3446" stroke-width="1.5">
+    <rect x="25" y="55" width="400" height="75" rx="10"/><rect x="25" y="145" width="400" height="75" rx="10"/>
+    <rect x="475" y="55" width="400" height="55" rx="10"/><rect x="475" y="120" width="400" height="55" rx="10"/><rect x="475" y="185" width="400" height="55" rx="10"/><rect x="475" y="250" width="400" height="55" rx="10"/>
+  </g>
+  <g font-size="16" font-weight="700" fill="#e6edf3">
+    <text x="45" y="82">CH1 / CH2</text><text x="45" y="172">CH3</text>
+    <text x="495" y="80">CH1 / CH2</text><text x="495" y="145">CH3</text><text x="495" y="210">CH4</text>
+  </g>
+  <g font-size="14" fill="#c9d1d9">
+    <text x="45" y="106">0-32 V, 0-6 A, programmable V and I</text>
+    <text x="45" y="196">1.8 / 2.5 / 3.3 / 5 V, fixed 5 A, output on/off</text>
+    <text x="495" y="98">0-32 V, 0-3 A, programmable</text>
+    <text x="495" y="163">0-5 V, 0-1 A, programmable</text>
+    <text x="495" y="228">0-15 V, 0-1 A, programmable</text>
+  </g>
+  <text x="45" y="275" fill="#8b98a9" font-size="13">Tracking, Load CV/CC/CR and native Sequence: CH1/CH2 only.</text>
+  <text x="45" y="296" fill="#8b98a9" font-size="13">The channels shown are built from the verified *IDN? reply.</text>
+</svg>

@@ -8,6 +8,8 @@ The check is optional and quiet: it runs shortly after startup and from **Help â
 
 ## Publishing a release (maintainer)
 
+See [RELEASING.md](RELEASING.md) for the full checklist and release-notes guide.
+
 1. Bump `Version`, `AssemblyVersion`, `FileVersion` and `InformationalVersion` in `GW-Studio.csproj` and `installer/GW-Studio.iss` default, and add a `CHANGELOG.md` entry.
 2. Create and push a tag `vX.Y.Z` (for example `v1.1.2`).
 3. `.github/workflows/release.yml` builds a self-contained win-x64 publish and attaches to the GitHub Release:

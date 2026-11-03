@@ -30,6 +30,21 @@ jobs:
           if ($ref -match '^v(\d+\.\d+\.\d+)$') { $v = $Matches[1] } else { $v = "0.0.0" }
           "version=$v" >> $env:GITHUB_OUTPUT
 
+      - name: Extract release notes from CHANGELOG.md
+        shell: pwsh
+        run: |
+          # Uses the "# vX.Y.Z" section of CHANGELOG.md as the release body (shown in the in-app update prompt).
+          $v = "${{ steps.ver.outputs.version }}"
+          $lines = Get-Content CHANGELOG.md -Encoding UTF8
+          $out = @(); $in = $false
+          foreach ($l in $lines) {
+            if ($l -match '^# v?(\d+\.\d+\.\d+)') { if ($in) { break }; if ($Matches[1] -eq $v) { $in = $true; continue } }
+            elseif ($in) { $out += $l }
+          }
+          $body = ($out -join "`n").Trim()
+          if (-not $body) { $body = "GW Studio v$v" }
+          Set-Content -Path release-notes.md -Value $body -Encoding UTF8
+
       - name: Run tests
         run: dotnet run --project Tests/GW-Studio.Tests.csproj -c Release
 
@@ -70,4 +85,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          generate_release_notes: true
+          body_path: release-notes.md
+          name: GW Studio v${{ steps.ver.outputs.version }}

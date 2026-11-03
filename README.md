@@ -76,12 +76,21 @@ Build voltage waveforms (linear, exponential, logarithmic, inverse-time, referen
 
 > PC-timed bench aid only. It is **not** a MIL-STD-704 compliance tool.
 
+### More tabs
+
+<table>
+<tr><td width="50%" align="center"><img src="docs/images/custom-tests.png" alt="Custom"><br><b>Custom</b><br><sub>PC-timed pulse, step and cycle timelines</sub></td><td width="50%" align="center"><img src="docs/images/sequence.png" alt="Sequence"><br><b>Sequence</b><br><sub>Native sequence that runs inside the instrument</sub></td></tr>
+<tr><td width="50%" align="center"><img src="docs/images/terminal.png" alt="Terminal"><br><b>Terminal</b><br><sub>Raw SCPI with a command / response log</sub></td><td width="50%" align="center"><img src="docs/images/settings.png" alt="Settings"><br><b>Settings</b><br><sub>Polling, connection health, auto reconnect</sub></td></tr>
+</table>
+
 ### Logger and PDF reports
 Log every reading to CSV and generate a PDF report of your session when you are done.
 
 ---
 
 ## 🛡️ Safety in one minute
+
+<img src="docs/images/safety-flow.svg" alt="Safety flow: connect, apply, output on, all output off" width="900">
 
 - **Connect never changes an output.**
 - **APPLY changes setpoints only.** Output ON is always an explicit action.
@@ -93,13 +102,7 @@ Log every reading to CSV and generate a PDF report of your session when you are 
 
 ## 📦 Supported instruments
 
-| Model | Channel | Programmable range |
-| --- | --- | --- |
-| GPP-3060 | CH1 / CH2 | 0–32 V, 0–6 A |
-| GPP-3060 | CH3 | 1.8 / 2.5 / 3.3 / 5 V, fixed 5 A (output on/off only) |
-| GPP-4323 | CH1 / CH2 | 0–32 V, 0–3 A |
-| GPP-4323 | CH3 | 0–5 V, 0–1 A |
-| GPP-4323 | CH4 | 0–15 V, 0–1 A |
+<img src="docs/images/channels.svg" alt="Channels of GPP-3060 and GPP-4323" width="900">
 
 Serial link: 115200 baud, 8N1, LF termination.
 
@@ -175,7 +178,7 @@ The **Setup** edition downloads and starts the new installer. The **Portable** e
 
 ## 📚 More documentation
 
-[SCPI commands](docs/COMMANDS.md) · [Hardware checklist](docs/HARDWARE-CHECK.md) · [Manual notes](docs/GPP-SERIES-MANUAL-NOTES.md) · [Online update](docs/ONLINE-UPDATE.md) · [Changelog](CHANGELOG.md)
+[SCPI commands](docs/COMMANDS.md) · [Hardware checklist](docs/HARDWARE-CHECK.md) · [Manual notes](docs/GPP-SERIES-MANUAL-NOTES.md) · [Online update](docs/ONLINE-UPDATE.md) · [Releasing](docs/RELEASING.md) · [Changelog](CHANGELOG.md)
 
 <div align="center">
 

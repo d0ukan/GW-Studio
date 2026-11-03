@@ -76,12 +76,21 @@ Gerilim dalga formları oluşturun (lineer, üstel, logaritmik, ters-zaman, refe
 
 > Sadece PC zamanlamalı bir bench yardımcısıdır. MIL-STD-704 uygunluk aracı **değildir**.
 
+### Diğer sekmeler
+
+<table>
+<tr><td width="50%" align="center"><img src="docs/images/custom-tests.png" alt="Custom"><br><b>Custom</b><br><sub>Özel puls, adım ve döngü zaman çizelgeleri (PC zamanlamalı)</sub></td><td width="50%" align="center"><img src="docs/images/sequence.png" alt="Sequence"><br><b>Sequence</b><br><sub>Cihazın kendi içinde çalışan native sequence</sub></td></tr>
+<tr><td width="50%" align="center"><img src="docs/images/terminal.png" alt="Terminal"><br><b>Terminal</b><br><sub>Ham SCPI komutları, komut/yanıt günlüğü</sub></td><td width="50%" align="center"><img src="docs/images/settings.png" alt="Settings"><br><b>Settings</b><br><sub>Polling, bağlantı sağlığı, otomatik yeniden bağlanma</sub></td></tr>
+</table>
+
 ### Logger ve PDF raporları
 Tüm ölçümleri CSV'ye kaydedin, işiniz bitince oturumun PDF raporunu oluşturun.
 
 ---
 
 ## 🛡️ Bir dakikada güvenlik
+
+<img src="docs/images/safety-flow.svg" alt="Safety flow: connect, apply, output on, all output off" width="900">
 
 - **Bağlanmak hiçbir çıkışı değiştirmez.**
 - **APPLY sadece set değerlerini değiştirir.** Çıkışı açmak her zaman ayrı ve bilinçli bir işlemdir.
@@ -93,13 +102,7 @@ Tüm ölçümleri CSV'ye kaydedin, işiniz bitince oturumun PDF raporunu oluştu
 
 ## 📦 Desteklenen cihazlar
 
-| Model | Kanal | Programlanabilir aralık |
-| --- | --- | --- |
-| GPP-3060 | CH1 / CH2 | 0–32 V, 0–6 A |
-| GPP-3060 | CH3 | 1.8 / 2.5 / 3.3 / 5 V, sabit 5 A (sadece çıkış aç/kapat) |
-| GPP-4323 | CH1 / CH2 | 0–32 V, 0–3 A |
-| GPP-4323 | CH3 | 0–5 V, 0–1 A |
-| GPP-4323 | CH4 | 0–15 V, 0–1 A |
+<img src="docs/images/channels.svg" alt="Channels of GPP-3060 and GPP-4323" width="900">
 
 Seri bağlantı: 115200 baud, 8N1, LF sonlandırma.
 
@@ -174,7 +177,7 @@ GW Studio açıldıktan sonra sessizce en son [GitHub Release](https://github.co
 
 ## 📚 Diğer dokümanlar
 
-[SCPI komutları](docs/COMMANDS.md) · [Donanım kontrol listesi](docs/HARDWARE-CHECK.md) · [Kılavuz notları](docs/GPP-SERIES-MANUAL-NOTES.md) · [Online güncelleme](docs/ONLINE-UPDATE.md) · [Changelog](CHANGELOG.md)
+[SCPI komutları](docs/COMMANDS.md) · [Donanım kontrol listesi](docs/HARDWARE-CHECK.md) · [Kılavuz notları](docs/GPP-SERIES-MANUAL-NOTES.md) · [Online güncelleme](docs/ONLINE-UPDATE.md) · [Release süreci](docs/RELEASING.md) · [Changelog](CHANGELOG.md)
 
 <div align="center">
 

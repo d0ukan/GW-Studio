@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 190" font-family="Segoe UI, Arial, sans-serif">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4dd0c4"/></marker></defs>
+  <rect width="900" height="190" rx="12" fill="#0f141c"/>
+  <g fill="#161d29" stroke="#2a3446" stroke-width="1.5">
+    <rect x="25" y="35" width="185" height="95" rx="10"/><rect x="250" y="35" width="185" height="95" rx="10"/>
+    <rect x="475" y="35" width="185" height="95" rx="10"/><rect x="700" y="35" width="175" height="95" rx="10" stroke="#c0505a"/>
+  </g>
+  <g fill="#4dd0c4" font-size="17" font-weight="700" text-anchor="middle">
+    <text x="117" y="68">1  CONNECT</text><text x="342" y="68">2  APPLY</text><text x="567" y="68">3  OUTPUT ON</text>
+  </g>
+  <text x="787" y="68" fill="#e06c75" font-size="17" font-weight="700" text-anchor="middle">ALL OUTPUT OFF</text>
+  <g fill="#c9d1d9" font-size="13" text-anchor="middle">
+    <text x="117" y="94">Reads identity, settings</text><text x="117" y="112">and states only</text>
+    <text x="342" y="94">Changes setpoints only</text><text x="342" y="112">Range checked first</text>
+    <text x="567" y="94">Always an explicit</text><text x="567" y="112">action per channel</text>
+    <text x="787" y="94">Always visible,</text><text x="787" y="112">works at any time</text>
+  </g>
+  <g stroke="#4dd0c4" stroke-width="2" marker-end="url(#a)"><line x1="212" y1="82" x2="246" y2="82"/><line x1="437" y1="82" x2="471" y2="82"/><line x1="662" y1="82" x2="696" y2="82" stroke="#c0505a"/></g>
+  <text x="450" y="165" fill="#8b98a9" font-size="13" text-anchor="middle">Outputs are never switched by connecting or applying. Nothing is sent before validation passes.</text>
+</svg>
