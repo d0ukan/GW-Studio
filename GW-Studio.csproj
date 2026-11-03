@@ -4,7 +4,7 @@
     <RootNamespace>Dou_GW_Studio</RootNamespace><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF><EnableWindowsTargeting>true</EnableWindowsTargeting>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <Version>1.1.1</Version><AssemblyVersion>1.1.1.0</AssemblyVersion><FileVersion>1.1.1.0</FileVersion><InformationalVersion>1.1.1</InformationalVersion>
+    <Version>1.2.0</Version><AssemblyVersion>1.2.0.0</AssemblyVersion><FileVersion>1.2.0.0</FileVersion><InformationalVersion>1.2.0</InformationalVersion>
     <AssemblyName>GW Studio</AssemblyName><Title>GW Studio</Title><Product>GW Studio</Product>
     <Authors>Dou</Authors>
     <Company>Made by Dou</Company><Copyright>Made by Dou</Copyright>

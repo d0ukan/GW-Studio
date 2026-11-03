@@ -1,9 +1,22 @@
-# Unreleased
+# v1.2.0 — 2026-11-04
 
-- Online update now reads the latest **GitHub Release** (`d0ukan/GW-Studio`) instead of the portal; the Setup `.exe` asset is downloaded and started directly.
-- Added a **Portable** edition (marked by `portable.txt`) that never runs the installer and instead opens the release page.
-- Added `installer/GW-Studio.iss` (Inno Setup) and a GitHub Actions release workflow producing a self-contained Setup `.exe` and Portable ZIP.
-- Fixed the console test project so it builds; added update-parsing tests.
+### New
+- Updates now come from **GitHub Releases**. GW Studio checks the latest release after startup and asks **Update Now / Later** before downloading or installing anything.
+- New **Portable** edition (ZIP, no install). It never runs the installer; when a newer version exists it opens the download page instead.
+- New Windows **Setup** installer with Start Menu / desktop shortcuts. Releases are self-contained, so no separate .NET installation is needed.
+- Redesigned README with screenshots and diagrams, plus a Turkish version.
+
+### Improved
+- Update prompt shows the release notes from the GitHub release.
+
+### Fixed
+- The console test project builds again; added tests for GitHub release parsing.
+
+### Safety / device behavior
+- No change to device control, output switching rules, limits, logging or 704 Lab.
+
+### Note
+- Copies older than 1.2.0 still used the retired portal for update checks and need a one-time manual install of this version.
 
 # v1.1.1 — 2026-10-02
 

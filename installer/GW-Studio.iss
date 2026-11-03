@@ -3,7 +3,7 @@
 ; Output: installer\Output\GW-Studio-Setup-v<version>.exe
 
 #ifndef MyAppVersion
-  #define MyAppVersion "1.1.1"
+  #define MyAppVersion "1.2.0"
 #endif
 #ifndef PublishDir
   #define PublishDir "..\publish"

@@ -10,7 +10,7 @@
 
 [English](README.md) · **Türkçe**
 
-![Sürüm](https://img.shields.io/badge/s%C3%BCr%C3%BCm-1.1.1-00BCD4)
+![Sürüm](https://img.shields.io/badge/s%C3%BCr%C3%BCm-1.2.0-00BCD4)
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4)
 

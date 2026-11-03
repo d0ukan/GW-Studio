@@ -10,7 +10,7 @@ Supports **GPP-3060** and **GPP-4323** · USB CDC (virtual COM port) · Auto mod
 
 **English** · [Türkçe](README.tr.md)
 
-![Version](https://img.shields.io/badge/version-1.1.1-00BCD4)
+![Version](https://img.shields.io/badge/version-1.2.0-00BCD4)
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4)
 
