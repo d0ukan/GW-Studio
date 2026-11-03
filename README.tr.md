@@ -14,7 +14,7 @@
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4)
 
-<img src="docs/images/dashboard.png" alt="GW Studio paneli" width="900">
+<img src="docs/images/704-lab.png" alt="GW Studio 704 Lab" width="900">
 
 </div>
 
@@ -53,8 +53,6 @@ En son sürümü [**Releases**](https://github.com/d0ukan/GW-Studio/releases) sa
 
 Güç kaynağını USB ile takın, COM portunu seçin ve **CONNECT**'e basın. GW Studio modeli tanır ve ona uygun kanal kartlarını oluşturur. Çıkışlarınız olduğu gibi kalır.
 
-<img src="docs/images/connect.gif" alt="Cihaza bağlanma" width="720">
-
 ### 3. Ayarlayın ve açın
 
 Gerilim ve akım limitini girin, **APPLY SETTINGS**'e basın, sonra kanal çıkışını **ON** yapın. Değerleri uygulamak çıkışı kendiliğinden açmaz.
@@ -65,8 +63,6 @@ Gerilim ve akım limitini girin, **APPLY SETTINGS**'e basın, sonra kanal çık�
 
 ### Dashboard
 Günlük bench çalışması için her şey: canlı ölçümler, set değerleri, kilitler ve presetler. Başlıktaki **COMPACT / ADVANCED** düğmesiyle sadece ihtiyacınız olanı gösterebilirsiniz.
-
-<img src="docs/images/dashboard.png" alt="Dashboard" width="800">
 
 ### Live Graph
 Gerilim, akım ve gücü gerçek zamanlı izleyin. Çıkış, set ve koruma olayları otomatik işaretlenir.
@@ -82,8 +78,6 @@ Gerilim dalga formları oluşturun (lineer, üstel, logaritmik, ters-zaman, refe
 
 ### Logger ve PDF raporları
 Tüm ölçümleri CSV'ye kaydedin, işiniz bitince oturumun PDF raporunu oluşturun.
-
-<img src="docs/images/logger-pdf.png" alt="Logger ve PDF raporu" width="800">
 
 ---
 

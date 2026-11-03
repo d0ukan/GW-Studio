@@ -14,7 +14,7 @@ Supports **GPP-3060** and **GPP-4323** · USB CDC (virtual COM port) · Auto mod
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078D4)
 
-<img src="docs/images/dashboard.png" alt="GW Studio dashboard" width="900">
+<img src="docs/images/704-lab.png" alt="GW Studio 704 Lab" width="900">
 
 </div>
 
@@ -53,8 +53,6 @@ Get the latest build from the [**Releases**](https://github.com/d0ukan/GW-Studio
 
 Plug in the power supply over USB, pick its COM port and press **CONNECT**. GW Studio identifies the model and builds the matching channel cards. Your outputs stay exactly as they were.
 
-<img src="docs/images/connect.gif" alt="Connecting to the instrument" width="720">
-
 ### 3. Set and switch on
 
 Enter voltage and current limit, press **APPLY SETTINGS**, then switch the channel output **ON**. Applying values never turns an output on by itself.
@@ -65,8 +63,6 @@ Enter voltage and current limit, press **APPLY SETTINGS**, then switch the chann
 
 ### Dashboard
 Everything for day-to-day bench work: live readings, setpoints, locks and presets. Switch between **COMPACT** and **ADVANCED** in the header to show only what you need.
-
-<img src="docs/images/dashboard.png" alt="Dashboard" width="800">
 
 ### Live Graph
 Watch voltage, current and power in real time. Output, setpoint and protection events are marked automatically.
@@ -82,8 +78,6 @@ Build voltage waveforms (linear, exponential, logarithmic, inverse-time, referen
 
 ### Logger and PDF reports
 Log every reading to CSV and generate a PDF report of your session when you are done.
-
-<img src="docs/images/logger-pdf.png" alt="Logger and PDF report" width="800">
 
 ---
 
